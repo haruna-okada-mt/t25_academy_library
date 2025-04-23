@@ -19,3 +19,4 @@ public interface BookMstRepository extends JpaRepository<BookMst, Long> {
 	List<BookMst> selectByIsbn(String isbn);
 
 }
+

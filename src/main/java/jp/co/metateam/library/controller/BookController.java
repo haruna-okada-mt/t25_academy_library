@@ -75,7 +75,6 @@ public class BookController {
                 return "/book/add";
             }
 
-
             // 重複チェック
             // ISBNがすでにデータベースにあるか調べる
             boolean isbnExist = bookMstService.selectByIsbn(bookMstDto.getIsbn(), model);
@@ -94,10 +93,10 @@ public class BookController {
             // 一覧画面に遷移
             return "redirect:/book/index";
 
-        } catch (Exception e) {
+        } catch (Exception e) { 
 
             return "redirect:/book/add";
         }
     }
-
 }
+
