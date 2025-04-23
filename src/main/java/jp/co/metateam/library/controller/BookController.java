@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.validation.Valid;
+import jp.co.metateam.library.model.Account;
+import jp.co.metateam.library.model.AccountDto;
 import jp.co.metateam.library.model.BookMst;
 import jp.co.metateam.library.model.BookMstDto;
 import jp.co.metateam.library.service.BookMstService;
@@ -51,4 +53,51 @@ public class BookController {
         return "book/add";
     }
     
+    // 新しく追加 (register 登録)
+    @PostMapping("/book/add")
+    public String register(@Valid @ModelAttribute BookMstDto bookMstDto, BindingResult result, RedirectAttributes ra, Model model) {
+        try {
+
+            // 入力された書籍名にエラーがないか
+            boolean ValidTitle = bookMstService.isValidTitle(bookMstDto.getTitle(), model);
+            if (ValidTitle) {
+                model.addAttribute("bookMatDto", bookMstDto);
+                // return "/book/add";
+            }
+            // 入力されたISBNにエラーがないか
+            boolean ValidIsbn = bookMstService.isValidIsbn(bookMstDto.getIsbn(), model);
+            if (ValidIsbn) {
+                model.addAttribute("bookMatDto", bookMstDto);
+                // return "/book/add";
+            }
+            // 書籍名・ISBNどちらかにエラーがある場合は遷移しない
+            if (ValidTitle||ValidIsbn) {
+                return "/book/add";
+            }
+
+
+            // 重複チェック
+            // ISBNがすでにデータベースにあるか調べる
+            boolean isbnExist = bookMstService.selectByIsbn(bookMstDto.getIsbn(), model);
+
+            // すでにINBSが存在するときエラー表示
+            if (isbnExist) {
+
+                model.addAttribute("bookMatDto", bookMstDto);
+                return "/book/add";
+
+            }
+
+            // エラーなしの場合DBに登録
+            this.bookMstService.save(bookMstDto);
+
+            // 一覧画面に遷移
+            return "redirect:/book/index";
+
+        } catch (Exception e) {
+
+            return "redirect:/book/add";
+        }
+    }
+
 }
