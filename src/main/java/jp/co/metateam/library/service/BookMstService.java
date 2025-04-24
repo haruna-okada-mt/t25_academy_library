@@ -73,7 +73,7 @@ public class BookMstService {
             return true;
         }
         // 書籍名の桁数が255文字以上のとき
-        if (title.length() > 5) {
+        if (title.length() > 255) {
 
             model.addAttribute("errTitle", "書籍名は255文字以内で入力してください");
             return true;
